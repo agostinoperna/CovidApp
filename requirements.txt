@@ -2,3 +2,6 @@ altair
 pandas
 streamlit
 plotly
+make_subplots
+import plotly.express
+plotly.graph_objects 
