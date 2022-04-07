@@ -1,40 +1,21 @@
 import streamlit as st
-import pandas as pd
-#from plotly.subplots import make_subplots
-# import plotly.express as px
-# import plotly.graph_objects as go
 import plotly.figure_factory as ff
+import numpy as np
 
+# Add histogram data
+x1 = np.random.randn(200) - 2
+x2 = np.random.randn(200)
+x3 = np.random.randn(200) + 2
 
-st.title('Analisi decessi province italiane 2011-2021')
+# Group data together
+hist_data = [x1, x2, x3]
 
-uploaded_file = st.file_uploader(label = "Scegli il file in formato csv", accept_multiple_files = False , type = ["csv"])
+group_labels = ['Group 1', 'Group 2', 'Group 3']
 
-if uploaded_file:
-	df=pd.read_csv(uploaded_file)
-	province = df.columns.tolist()
-	st.sidebar.title("Liste delle province")
+# Create distplot with custom bin_size
+fig = ff.create_distplot(
+         hist_data, group_labels, bin_size=[.1, .25, .5])
 
-	province.remove("data")
-	province_selezionate = st.sidebar.multiselect(label = "", options=province)
+# Plot!
+st.plotly_chart(fig, use_container_width=True)
 
-	if province_selezionate:
-		check_box=st.checkbox("Crea grafico")
-		if check_box:
-			rows = len(province_selezionate)
-			fig=make_subplots(rows = rows, cols = 1, shared_xaxes = True, subplot_titles=province_selezionate)
-			for provincia in province_selezionate:
-				fig.add_trace(ff.Scatter( x=df['data'] , y = df[provincia], name=provincia),
-							  row=province_selezionate.index(provincia) +1, col=1)
-			fig.update_layout(showlegend=False, plot_bgcolor='rgb(255,255,255)')
-			fig.update_xaxes(showgrid=True, gridwidth=0.05, gridcolor="LightPink",
-			zeroline=True,zerolinewidth=2,zerolinecolor='Black')
-			fig.update_yaxes(showgrid=True, gridwidth=0.05, gridcolor="LightPink",
-			zeroline=True,zerolinewidth=2,zerolinecolor='Black')
-			st.plotly_chart(fig)
-
-#ricorda di installare plotly 
-#conda install -c plotly/label/test plotly
-
-#installare stramlit
-#pip install streamlit
